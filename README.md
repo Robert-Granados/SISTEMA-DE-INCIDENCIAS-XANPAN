@@ -46,14 +46,24 @@ El código de producción está en `src/main/java` y las pruebas en
 
 ## Ejecutar la aplicacion
 
-Construye el JAR y ejecuta la demostracion tecnica desde la raiz:
+Construye el JAR y abre la interfaz grafica desde la raiz:
 
 ```bash
 mvn clean package
 java -jar target/sistema-incidencias-1.0.0-SNAPSHOT.jar
 ```
 
-La salida muestra dos registros, prioridad automatica, transiciones, una incidencia EXPEDITE, cierre con solucion y metricas.
+La interfaz permite registrar, buscar y filtrar incidencias; avanzar estados;
+marcar EXPEDITE; finalizar con una solucion y consultar metricas.
+
+La demostracion original de consola sigue disponible:
+
+```bash
+java -jar target/sistema-incidencias-1.0.0-SNAPSHOT.jar --console
+```
+
+Los datos de la interfaz se guardan en memoria durante la ejecucion. El boton
+`Cargar datos de ejemplo` prepara un escenario rapido para la defensa.
 
 ## Base de datos PostgreSQL
 
@@ -111,6 +121,7 @@ el esquema PostgreSQL en cada `push` y `pull_request`.
 
 - [Tablero Kanban y limites WIP](docs/KANBAN.md)
 - [Evidencia de TDD y trazabilidad](docs/EVIDENCIAS-TDD.md)
+- [Guia para explicar la interfaz](docs/INTERFAZ.md)
 - [Bitacora de uso de IA](IA-LOG.md)
 - [Retrospectiva](RETROSPECTIVA.md)
 
@@ -128,4 +139,4 @@ Decisiones principales:
 
 ## Estado de integracion continua
 
-El workflow `ci.yml` se ejecuta en cada `push` y `pull_request`, compila con Java 17, ejecuta las 91 pruebas Java y valida el esquema PostgreSQL. El distintivo superior apunta a la rama `feature/Alejandro`.
+El workflow `ci.yml` se ejecuta en cada `push` y `pull_request`, compila con Java 17, ejecuta las 99 pruebas Java y valida el esquema PostgreSQL. El distintivo superior apunta a la rama `feature/Alejandro`.
