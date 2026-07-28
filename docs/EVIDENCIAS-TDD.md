@@ -12,6 +12,24 @@
 - **GREEN - commit `bfb059d`:** `ExpeditePolicy.canEnterActiveState` comprueba el repositorio al intentar entrar a `EN_DESARROLLO` o `EN_VALIDACION`.
 - **REFACTOR:** `ExpediteService` e `IncidentService` comparten la misma politica; se elimino la busqueda duplicada del servicio de marcado.
 
+## Ciclo 3: metricas basadas en la fecha real de cierre
+
+- **Problema:** HU-05 contaba todos los cierres como throughput y usaba `updatedAt`; una edicion posterior alteraba artificialmente el lead time.
+- **RED - commit `dcf8796`:** tres pruebas exigieron `closedAt`, un periodo `[inicio, fin)` y un reloj controlable. La suite fallo por las API todavia inexistentes.
+- **GREEN - commit `4ebf823`:** `Incident` registra el cierre, `MetricsService` filtra por periodo y calcula desde `createdAt` hasta `closedAt`.
+- **REFACTOR:** se inyecto `Clock`, se mantuvieron constructores compatibles y `touch()` concentro la actualizacion de `updatedAt`.
+- **Pruebas de proteccion:** `shouldRecordClosureAndMeasureThroughputInsideRequestedPeriod`, `shouldUseClosureDateInsteadOfLaterUpdatesForAverageLeadTime` y `shouldRejectInvalidThroughputPeriods`.
+- **Resultado:** `mvn clean verify` ejecuto 91 pruebas, sin fallos ni errores, y genero el JAR ejecutable.
+
+## Refactorizacion demostrable
+
+| Elemento | Evidencia |
+| --- | --- |
+| Situacion inicial | La regla EXPEDITE estaba duplicada y los tiempos dependian directamente de `LocalDateTime.now()` |
+| Mejora aplicada | `ExpeditePolicy`, `Clock`, `closedAt` y `touch()` separan politica, tiempo de cierre y actualizaciones |
+| Comportamiento protegido | Pruebas unitarias, dos pruebas funcionales y los ciclos RED/GREEN anteriores |
+| Resultado verificable | 91 pruebas verdes; API anterior compatible; commits pequenos y reversibles |
+
 ## Dos pruebas funcionales
 
 | Prueba | Flujo cubierto |
