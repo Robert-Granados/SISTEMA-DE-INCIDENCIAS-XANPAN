@@ -10,6 +10,7 @@ permissions:
 jobs:
   pruebas:
     runs-on: ubuntu-latest
+    timeout-minutes: 15
 
     steps:
       - name: Descargar el código

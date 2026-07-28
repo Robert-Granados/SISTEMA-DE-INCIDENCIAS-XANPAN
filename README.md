@@ -1,5 +1,7 @@
 # Sistema de Incidencias Xanpan
 
+[![Integracion continua](https://github.com/Robert-Granados/SISTEMA-DE-INCIDENCIAS-XANPAN/actions/workflows/ci.yml/badge.svg?branch=main)](https://github.com/Robert-Granados/SISTEMA-DE-INCIDENCIAS-XANPAN/actions/workflows/ci.yml)
+
 Proyecto configurado con:
 
 - Java 17 o superior
@@ -76,3 +78,20 @@ docker compose up -d --wait
 ```
 
 Los scripts de `database/init` solamente se ejecutan al crear un volumen vacío.
+
+## Calidad y documentacion
+
+La suite contiene pruebas unitarias y dos flujos funcionales etiquetados con
+`functional`. Para ejecutar solamente esos flujos:
+
+```bash
+mvn -Dgroups=functional test
+```
+
+El pipeline de integracion continua compila, ejecuta las pruebas Java y valida
+el esquema PostgreSQL en cada `push` y `pull_request`.
+
+- [Tablero Kanban y limites WIP](docs/KANBAN.md)
+- [Evidencia de TDD y trazabilidad](docs/EVIDENCIAS-TDD.md)
+- [Bitacora de uso de IA](IA-LOG.md)
+- [Retrospectiva](RETROSPECTIVA.md)
