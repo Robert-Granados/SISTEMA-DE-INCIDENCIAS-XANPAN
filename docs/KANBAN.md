@@ -2,6 +2,16 @@
 
 Este archivo es la fuente versionada del tablero del proyecto. Cada cambio de estado debe actualizarse en el mismo commit que aporta su evidencia tecnica.
 
+## Tablero operativo externo
+
+[Abrir GitHub Project: HelpDesk Flow - Xanpan](https://github.com/users/AlejandroXV5/projects/1)
+
+El Project publico contiene el campo `Flujo Xanpan` con Backlog, Preparado, En desarrollo, Validacion y Hecho. Sus limites visibles son Preparado 3, En desarrollo 1 y Validacion 1.
+
+Las tarjetas estan enlazadas con issues reales del repositorio: [HU-01 a HU-06](https://github.com/Robert-Granados/SISTEMA-DE-INCIDENCIAS-XANPAN/issues), los defectos de cierre y EXPEDITE, las tareas de CI y ejecutable, documentacion y auditoria final.
+
+Nota de trazabilidad: el Project externo se materializo durante la auditoria final del 28 de julio. Sus movimientos desde ese momento son reales, pero no se presentan como sustituto de un historial externo que debio comenzar el primer dia; el historial anterior se conserva en commits y en este archivo versionado.
+
 ## Columnas y limites WIP
 
 | Columna | Politica de entrada | Limite WIP |
