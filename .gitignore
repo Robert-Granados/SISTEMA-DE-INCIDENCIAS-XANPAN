@@ -1,4 +1,5 @@
 target/
+.mvn-cache/
 .env
 .idea/
 .vscode/
