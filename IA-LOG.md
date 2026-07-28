@@ -4,7 +4,7 @@
 
 - Fecha: 28 de julio de 2026.
 - Rama de trabajo: `feature/Alejandro`.
-- Alcance: pruebas automatizadas, estados, EXPEDITE, integracion continua, Kanban y documentacion de la Persona 2.
+- Alcance: pruebas automatizadas, estados, EXPEDITE, interfaz Swing, integracion continua, Kanban y documentacion de la Persona 2.
 - Herramienta: Codex, utilizada como apoyo tecnico. Todas las propuestas se revisaron y verificaron antes de conservarlas.
 
 ## Registro estructurado de interacciones
@@ -15,6 +15,7 @@
 | 2026-07-28 | Codex | Cubrir cierre seguro y limite EXPEDITE con TDD | Propuso pruebas funcionales y una politica compartida | Commit RED `fca3510`, commit GREEN `bfb059d` y 87 pruebas verdes | Se amplio la comprobacion a cada entrada en estado activo |
 | 2026-07-28 | Codex | Convertir el proyecto en una entrega ejecutable | Propuso una demostracion de consola y manifiesto del JAR | Commit `d4d3e50`, 88 pruebas y ejecucion de `java -jar` | Se eligio una demo determinista sin framework adicional |
 | 2026-07-28 | Codex | Corregir throughput y lead time segun HU-05 | Detecto que faltaba periodo y que `updatedAt` no representa el cierre | RED `dcf8796`, GREEN `4ebf823` y 91 pruebas verdes | Se inyecto `Clock`, se agrego `closedAt` y se mantuvo la API anterior compatible |
+| 2026-07-28 | Codex | Agregar una interfaz que facilite la demostracion | Propuso Swing con ventana, controlador testeable, filtros, acciones y metricas | Commit `80a724e`, inspeccion visual y 99 pruebas verdes | Se conservo el modo consola y se impidio que la ventana duplicara reglas del dominio |
 
 ## Respuesta utilizada y modificada
 
@@ -58,7 +59,7 @@ La verificacion final se realiza con:
 mvn clean verify
 ```
 
-Resultado Java observado: 91 pruebas ejecutadas, 0 fallos y 0 errores.
+Resultado Java observado: 99 pruebas ejecutadas, 0 fallos y 0 errores.
 
 La validacion SQL local no pudo iniciarse porque Docker Desktop no estaba ejecutandose. Debe confirmarse con el job PostgreSQL de CI al publicar la rama.
 
@@ -69,3 +70,4 @@ El pipeline de `.github/workflows/ci.yml` ejecuta la misma verificacion y, adema
 - Se mantuvo el modelo de dominio y los servicios creados por Persona 1.
 - Se conservaron las interfaces existentes y se agregaron constructores compatibles para inyectar la politica y el reloj en pruebas.
 - Se evito reescribir el sistema: los cambios se limitaron a la politica EXPEDITE, el cierre seguro, pruebas y documentacion.
+- La interfaz se limito a presentacion y coordinacion; prioridad, estados, EXPEDITE y metricas permanecen en los servicios existentes.
