@@ -7,6 +7,7 @@ import com.xanpan.incident.model.Priority;
 import com.xanpan.incident.model.Urgency;
 import com.xanpan.incident.policy.ExpeditePolicy;
 import com.xanpan.incident.repository.IncidentRepository;
+import java.time.Clock;
 
 import java.util.List;
 import java.util.Optional;
@@ -18,9 +19,10 @@ public class IncidentService {
     private final PriorityCalculator priorityCalculator;
     private final StateTransitionValidator stateValidator;
     private final ExpeditePolicy expeditePolicy;
+    private final Clock clock;
 
     public IncidentService(IncidentRepository repository, PriorityCalculator priorityCalculator, StateTransitionValidator stateValidator) {
-        this(repository, priorityCalculator, stateValidator, new ExpeditePolicy());
+        this(repository, priorityCalculator, stateValidator, new ExpeditePolicy(), Clock.systemDefaultZone());
     }
 
     public IncidentService(
@@ -29,10 +31,30 @@ public class IncidentService {
             StateTransitionValidator stateValidator,
             ExpeditePolicy expeditePolicy
     ) {
+        this(repository, priorityCalculator, stateValidator, expeditePolicy, Clock.systemDefaultZone());
+    }
+
+    public IncidentService(
+            IncidentRepository repository,
+            PriorityCalculator priorityCalculator,
+            StateTransitionValidator stateValidator,
+            Clock clock
+    ) {
+        this(repository, priorityCalculator, stateValidator, new ExpeditePolicy(), clock);
+    }
+
+    public IncidentService(
+            IncidentRepository repository,
+            PriorityCalculator priorityCalculator,
+            StateTransitionValidator stateValidator,
+            ExpeditePolicy expeditePolicy,
+            Clock clock
+    ) {
         this.repository = repository;
         this.priorityCalculator = priorityCalculator;
         this.stateValidator = stateValidator;
         this.expeditePolicy = expeditePolicy;
+        this.clock = clock;
     }
 
     public Incident createIncident(String title, String description, Impact impact, Urgency urgency, String category) {
@@ -45,7 +67,16 @@ public class IncidentService {
 
         String id = UUID.randomUUID().toString();
         Priority priority = priorityCalculator.calculate(impact, urgency);
-        Incident incident = new Incident(id, title, description, impact, urgency, priority, category);
+        Incident incident = new Incident(
+                id,
+                title,
+                description,
+                impact,
+                urgency,
+                priority,
+                category,
+                clock
+        );
         repository.save(incident);
         return incident;
     }

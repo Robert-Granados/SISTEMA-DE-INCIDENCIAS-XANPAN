@@ -1,6 +1,8 @@
 package com.xanpan.incident.model;
 
 import java.time.LocalDateTime;
+import java.time.Clock;
+import java.util.Objects;
 
 public class Incident {
 
@@ -16,8 +18,23 @@ public class Incident {
     private boolean expedited;
     private final LocalDateTime createdAt;
     private LocalDateTime updatedAt;
+    private final Clock clock;
+    private LocalDateTime closedAt;
 
     public Incident(String id, String title, String description, Impact impact, Urgency urgency, Priority priority, String category) {
+        this(id, title, description, impact, urgency, priority, category, Clock.systemDefaultZone());
+    }
+
+    public Incident(
+            String id,
+            String title,
+            String description,
+            Impact impact,
+            Urgency urgency,
+            Priority priority,
+            String category,
+            Clock clock
+    ) {
         this.id = id;
         this.title = title;
         this.description = description;
@@ -26,8 +43,10 @@ public class Incident {
         this.priority = priority;
         this.category = category;
         this.state = IncidentState.REGISTRADA;
-        this.createdAt = LocalDateTime.now();
-        this.updatedAt = LocalDateTime.now();
+        this.clock = Objects.requireNonNull(clock, "El reloj no puede ser nulo");
+        LocalDateTime now = LocalDateTime.now(clock);
+        this.createdAt = now;
+        this.updatedAt = now;
     }
 
     public String getId() {
@@ -40,7 +59,7 @@ public class Incident {
 
     public void setTitle(String title) {
         this.title = title;
-        this.updatedAt = LocalDateTime.now();
+        touch();
     }
 
     public String getDescription() {
@@ -49,7 +68,7 @@ public class Incident {
 
     public void setDescription(String description) {
         this.description = description;
-        this.updatedAt = LocalDateTime.now();
+        touch();
     }
 
     public Impact getImpact() {
@@ -58,7 +77,7 @@ public class Incident {
 
     public void setImpact(Impact impact) {
         this.impact = impact;
-        this.updatedAt = LocalDateTime.now();
+        touch();
     }
 
     public Urgency getUrgency() {
@@ -67,7 +86,7 @@ public class Incident {
 
     public void setUrgency(Urgency urgency) {
         this.urgency = urgency;
-        this.updatedAt = LocalDateTime.now();
+        touch();
     }
 
     public Priority getPriority() {
@@ -76,7 +95,7 @@ public class Incident {
 
     public void setPriority(Priority priority) {
         this.priority = priority;
-        this.updatedAt = LocalDateTime.now();
+        touch();
     }
 
     public IncidentState getState() {
@@ -85,7 +104,11 @@ public class Incident {
 
     public void setState(IncidentState state) {
         this.state = state;
-        this.updatedAt = LocalDateTime.now();
+        LocalDateTime now = LocalDateTime.now(clock);
+        this.updatedAt = now;
+        if (state == IncidentState.FINALIZADA) {
+            this.closedAt = now;
+        }
     }
 
     public String getCategory() {
@@ -94,7 +117,7 @@ public class Incident {
 
     public void setCategory(String category) {
         this.category = category;
-        this.updatedAt = LocalDateTime.now();
+        touch();
     }
 
     public String getSolutionDescription() {
@@ -103,7 +126,7 @@ public class Incident {
 
     public void setSolutionDescription(String solutionDescription) {
         this.solutionDescription = solutionDescription;
-        this.updatedAt = LocalDateTime.now();
+        touch();
     }
 
     public boolean isExpedited() {
@@ -112,7 +135,7 @@ public class Incident {
 
     public void setExpedited(boolean expedited) {
         this.expedited = expedited;
-        this.updatedAt = LocalDateTime.now();
+        touch();
     }
 
     public LocalDateTime getCreatedAt() {
@@ -121,5 +144,13 @@ public class Incident {
 
     public LocalDateTime getUpdatedAt() {
         return updatedAt;
+    }
+
+    public LocalDateTime getClosedAt() {
+        return closedAt;
+    }
+
+    private void touch() {
+        this.updatedAt = LocalDateTime.now(clock);
     }
 }
