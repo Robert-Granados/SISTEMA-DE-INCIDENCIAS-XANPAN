@@ -74,17 +74,16 @@ class IncidentServiceTest {
     }
 
     @Test
-    void shouldCompleteFullValidFlow() {
+    void shouldRejectFinalizationThroughTransitionWithoutSolution() {
         Incident incident = service.createIncident("Title", "Description text", Impact.ALTO, Urgency.MEDIA, "Software");
 
         service.transitionState(incident.getId(), IncidentState.LISTA);
         service.transitionState(incident.getId(), IncidentState.EN_DESARROLLO);
         service.transitionState(incident.getId(), IncidentState.EN_VALIDACION);
-        service.transitionState(incident.getId(), IncidentState.FINALIZADA);
+        Optional<Incident> result = service.transitionState(incident.getId(), IncidentState.FINALIZADA);
 
-        Optional<Incident> finalIncident = service.findById(incident.getId());
-        assertTrue(finalIncident.isPresent());
-        assertEquals(IncidentState.FINALIZADA, finalIncident.get().getState());
+        assertFalse(result.isPresent());
+        assertEquals(IncidentState.EN_VALIDACION, incident.getState());
     }
 
     @Test
