@@ -10,10 +10,16 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import java.time.LocalDateTime;
+import java.time.Clock;
+import java.time.Duration;
+import java.time.Instant;
+import java.time.ZoneId;
+import java.time.ZoneOffset;
 import java.util.Map;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 class MetricsServiceTest {
 
@@ -112,10 +118,122 @@ class MetricsServiceTest {
 
         assertEquals(1, metricsService.totalIncidents());
     }
+    @Test
+    void shouldRecordClosureAndMeasureThroughputInsideRequestedPeriod() {
+        MutableClock clock = new MutableClock(
+                Instant.parse("2026-07-28T14:00:00Z"),
+                ZoneOffset.UTC
+        );
+        incidentService = new IncidentService(
+                repository,
+                new PriorityCalculator(),
+                new StateTransitionValidator(),
+                clock
+        );
+
+        Incident first = incidentService.createIncident(
+                "First closed",
+                "Description for first closure",
+                Impact.BAJO,
+                Urgency.BAJA,
+                "Software"
+        );
+        moveToEndValidacion(first.getId());
+        clock.advance(Duration.ofMinutes(30));
+        incidentService.completeIncident(first.getId(), "First solution");
+
+        clock.advance(Duration.ofMinutes(30));
+        Incident second = incidentService.createIncident(
+                "Second closed",
+                "Description for second closure",
+                Impact.MEDIO,
+                Urgency.MEDIA,
+                "Hardware"
+        );
+        moveToEndValidacion(second.getId());
+        clock.advance(Duration.ofHours(1));
+        incidentService.completeIncident(second.getId(), "Second solution");
+
+        assertEquals(LocalDateTime.of(2026, 7, 28, 14, 30), first.getClosedAt());
+        assertEquals(1, metricsService.throughput(
+                LocalDateTime.of(2026, 7, 28, 14, 0),
+                LocalDateTime.of(2026, 7, 28, 15, 0)
+        ));
+        assertEquals(1, metricsService.throughput(
+                LocalDateTime.of(2026, 7, 28, 15, 0),
+                LocalDateTime.of(2026, 7, 28, 17, 0)
+        ));
+    }
+
+    @Test
+    void shouldUseClosureDateInsteadOfLaterUpdatesForAverageLeadTime() {
+        MutableClock clock = new MutableClock(
+                Instant.parse("2026-07-28T14:00:00Z"),
+                ZoneOffset.UTC
+        );
+        incidentService = new IncidentService(
+                repository,
+                new PriorityCalculator(),
+                new StateTransitionValidator(),
+                clock
+        );
+        Incident incident = incidentService.createIncident(
+                "Lead time",
+                "Description for lead time",
+                Impact.ALTO,
+                Urgency.MEDIA,
+                "Red"
+        );
+        moveToEndValidacion(incident.getId());
+        clock.advance(Duration.ofMinutes(90));
+        incidentService.completeIncident(incident.getId(), "Applied solution");
+        clock.advance(Duration.ofMinutes(30));
+        incident.setTitle("Updated after closure");
+
+        assertEquals(90.0, metricsService.averageLeadTimeMinutes());
+    }
+
+    @Test
+    void shouldRejectInvalidThroughputPeriods() {
+        LocalDateTime instant = LocalDateTime.of(2026, 7, 28, 14, 0);
+
+        assertThrows(IllegalArgumentException.class,
+                () -> metricsService.throughput(instant, instant));
+        assertThrows(IllegalArgumentException.class,
+                () -> metricsService.throughput(null, instant));
+    }
 
     private void moveToEndValidacion(String incidentId) {
         incidentService.transitionState(incidentId, IncidentState.LISTA);
         incidentService.transitionState(incidentId, IncidentState.EN_DESARROLLO);
         incidentService.transitionState(incidentId, IncidentState.EN_VALIDACION);
+    }
+    private static final class MutableClock extends Clock {
+        private Instant currentInstant;
+        private final ZoneId zone;
+
+        private MutableClock(Instant currentInstant, ZoneId zone) {
+            this.currentInstant = currentInstant;
+            this.zone = zone;
+        }
+
+        private void advance(Duration duration) {
+            currentInstant = currentInstant.plus(duration);
+        }
+
+        @Override
+        public ZoneId getZone() {
+            return zone;
+        }
+
+        @Override
+        public Clock withZone(ZoneId requestedZone) {
+            return new MutableClock(currentInstant, requestedZone);
+        }
+
+        @Override
+        public Instant instant() {
+            return currentInstant;
+        }
     }
 }
