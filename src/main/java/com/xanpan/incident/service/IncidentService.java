@@ -5,6 +5,7 @@ import com.xanpan.incident.model.IncidentState;
 import com.xanpan.incident.model.Impact;
 import com.xanpan.incident.model.Priority;
 import com.xanpan.incident.model.Urgency;
+import com.xanpan.incident.policy.ExpeditePolicy;
 import com.xanpan.incident.repository.IncidentRepository;
 
 import java.util.List;
@@ -16,11 +17,22 @@ public class IncidentService {
     private final IncidentRepository repository;
     private final PriorityCalculator priorityCalculator;
     private final StateTransitionValidator stateValidator;
+    private final ExpeditePolicy expeditePolicy;
 
     public IncidentService(IncidentRepository repository, PriorityCalculator priorityCalculator, StateTransitionValidator stateValidator) {
+        this(repository, priorityCalculator, stateValidator, new ExpeditePolicy());
+    }
+
+    public IncidentService(
+            IncidentRepository repository,
+            PriorityCalculator priorityCalculator,
+            StateTransitionValidator stateValidator,
+            ExpeditePolicy expeditePolicy
+    ) {
         this.repository = repository;
         this.priorityCalculator = priorityCalculator;
         this.stateValidator = stateValidator;
+        this.expeditePolicy = expeditePolicy;
     }
 
     public Incident createIncident(String title, String description, Impact impact, Urgency urgency, String category) {
@@ -45,6 +57,15 @@ public class IncidentService {
         }
         Incident incident = optIncident.get();
         if (!stateValidator.isValidTransition(incident.getState(), newState)) {
+            return Optional.empty();
+        }
+        if (newState == IncidentState.FINALIZADA
+                && (incident.getSolutionDescription() == null
+                || incident.getSolutionDescription().isBlank())) {
+            return Optional.empty();
+        }
+        if (incident.isExpedited()
+                && !expeditePolicy.canEnterActiveState(incident, newState, repository)) {
             return Optional.empty();
         }
         incident.setState(newState);
