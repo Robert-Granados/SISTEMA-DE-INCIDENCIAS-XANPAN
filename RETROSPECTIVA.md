@@ -1,39 +1,35 @@
 # Retrospectiva del incremento de Persona 2
 
-## Objetivo del incremento
+Esta retrospectiva responde los ocho puntos solicitados y distingue los logros tecnicos de las limitaciones reales de trazabilidad encontradas durante la entrega.
 
-Completar la responsabilidad de Persona 2 sobre pruebas automatizadas, transiciones, EXPEDITE, integracion continua, tablero Kanban y documentacion, tomando como base la arquitectura de Persona 1.
+## 1. ?Que aporto Kanban al trabajo de la pareja?
 
-## Que salio bien
+Kanban hizo visible la secuencia logica del producto: primero preparar criterios, despues escribir la prueba RED, implementar GREEN, validar y cerrar. Las politicas de entrada y salida evitaron tratar una historia como terminada solo porque compilaba. Tambien permitio relacionar HU-01 a HU-06 con sus pruebas y separar las tareas de CI, documentacion y demostracion. Sin embargo, el tablero externo no se mantuvo desde el primer dia; reconstruirlo al cierre no sustituye un historial progresivo y queda reconocido como una debilidad de evidencia.
 
-- La implementacion de Persona 1 pudo integrarse sin reescritura y sus 85 pruebas iniciales quedaron como red de regresion.
-- Las pruebas funcionales revelaron dos bypasses que las pruebas unitarias aisladas no cubrian: finalizar sin solucion y activar dos EXPEDITE marcadas previamente.
-- La politica EXPEDITE quedo separada de los servicios, con una unica definicion de que estados consumen el limite activo.
-- El trabajo se dividio en commits pequenos: integracion de la base, evidencia RED, solucion GREEN y documentacion/CI.
-- Java y PostgreSQL tienen validaciones complementarias: el dominio protege el comportamiento de la aplicacion y el indice unico protege la concurrencia en la base de datos.
+## 2. ?Que dificultad genero el limite WIP?
 
-## Que dificulto el trabajo
+El limite de una tarjeta en desarrollo obligo a terminar la validacion y publicar un commit pequeno antes de iniciar otra correccion. Esto hizo mas lento cambiar de contexto cuando aparecieron varios faltantes a la vez, especialmente ejecutable, metricas y documentos. A cambio, redujo cambios mezclados. Las tareas documentales tambien cuentan como trabajo activo: abrir otra historia mientras la anterior seguia en validacion habria ocultado capacidad real.
 
-- La terminal usaba Java 11 aunque el proyecto exige Java 17 o superior. La verificacion local necesito seleccionar explicitamente el JDK 23 instalado.
-- La cache global de Maven no era escribible en el entorno. Se utilizo una cache local ignorada por Git.
-- El tablero remoto de GitHub no se pudo administrar desde la terminal porque la CLI `gh` no esta instalada y la conexion disponible no expone operaciones de GitHub Projects. Se dejo el tablero completo y auditable en `docs/KANBAN.md`.
+## 3. ?Que errores fueron detectados mediante TDD?
 
-## Que aprendimos
+Las pruebas detectaron que `transitionState` permitia finalizar sin una solucion, que dos incidencias marcadas EXPEDITE podian entrar luego a estados activos y superar el limite, y que HU-05 calculaba lead time con `updatedAt` en vez de una fecha de cierre. Tambien revelaron que throughput contaba todos los cierres sin aceptar un periodo. Los commits `fca3510`/`bfb059d` y `dcf8796`/`4ebf823` conservan los ciclos RED y GREEN.
 
-- Una regla de capacidad debe comprobarse cuando se consume la capacidad, no solamente cuando se etiqueta una entidad.
-- Un camino alternativo de API puede invalidar una regla aunque el flujo principal esta bien probado.
-- Las pruebas funcionales pequenas, apoyadas en dobles en memoria, encuentran errores de coordinacion sin volver lenta la suite.
-- Mantener la evidencia RED y GREEN en commits consecutivos hace verificable el uso de TDD.
+## 4. ?Que parte del codigo fue refactorizada?
 
-## Acciones para el siguiente incremento
+Se extrajo `ExpeditePolicy` para que `ExpediteService` e `IncidentService` compartieran una sola regla de capacidad. Luego se incorporo un `Clock` inyectable al modelo y al servicio, se agrego `closedAt` y se centralizo la actualizacion temporal con `touch()`. Las interfaces existentes conservaron constructores compatibles y la regresion completa quedo en 91 pruebas verdes.
 
-- Conectar `IncidentRepository` a PostgreSQL manteniendo el contrato probado por el repositorio en memoria.
-- Incorporar un reloj inyectable para probar lead time con valores exactos y sin depender de `LocalDateTime.now()`.
-- Materializar `docs/KANBAN.md` como GitHub Project cuando exista acceso a Projects y enlazar cada tarjeta con su issue o pull request.
-- Configurar Java 17+ como version predeterminada del entorno de desarrollo.
+## 5. ?Como afecto el cambio de requerimiento?
 
-## Start / Stop / Continue
+EXPEDITE obligo a revisar el flujo completo, no solo a agregar una bandera. La prioridad debe ser critica, solo una EXPEDITE puede consumir capacidad activa y el cupo debe liberarse al finalizar. Por eso la regla se verifica tanto al marcar como al entrar en `EN_DESARROLLO` o `EN_VALIDACION`, manteniendo sin cambios el comportamiento de incidencias normales.
 
-- **Start:** probar reglas de capacidad en todas las transiciones que cambian el consumo de WIP.
-- **Stop:** asumir que una validacion en un solo servicio protege todos los caminos publicos.
-- **Continue:** TDD, commits pequenos, revision cruzada y regresion completa antes de mover una tarjeta a Hecho.
+## 6. ?En que ayudo la IA?
+
+La IA ayudo a auditar la implementacion recibida, localizar criterios incompletos, proponer casos limite, estructurar la demostracion ejecutable y comparar los entregables contra la rubrica del PDF. Cada propuesta conservada se comprobo con Maven, ejecucion del JAR, historial Git o CI. La bitacora registra objetivos, resultados, verificaciones y decisiones humanas.
+
+## 7. ?En que se equivoco o fue insuficiente la IA?
+
+La primera propuesta de EXPEDITE comprobaba el limite solamente al marcar, lo que dejaba un bypass durante las transiciones. Tambien resulto insuficiente considerar `docs/KANBAN.md` equivalente a un tablero externo con movimiento progresivo. Ambas ideas fueron modificadas; se rechazo agregar infraestructura PostgreSQL a pruebas funcionales que debian permanecer rapidas y deterministas.
+
+## 8. ?Que cambiariamos en una siguiente version?
+
+Creariamos el GitHub Project y sus tarjetas antes del primer cambio, registrariamos movimientos durante cada ciclo y coordinariamos al menos un commit significativo por persona y por dia. Tambien dejariamos Java 17+, Docker y la CLI configurados desde el inicio, conectariamos un repositorio PostgreSQL sin romper el contrato en memoria y documentariamos la revision cruzada de la pareja antes de pasar cada tarjeta a Hecho.
