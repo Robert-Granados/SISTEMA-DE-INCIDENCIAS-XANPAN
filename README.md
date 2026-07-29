@@ -121,6 +121,7 @@ el esquema PostgreSQL en cada `push` y `pull_request`.
 
 - [Tablero Kanban y limites WIP](docs/KANBAN.md)
 - [Evidencia de TDD y trazabilidad](docs/EVIDENCIAS-TDD.md)
+- [Evidencia dedicada de refactorizacion](docs/REFACTOR.md)
 - [Guia para explicar la interfaz](docs/INTERFAZ.md)
 - [Bitacora de uso de IA](IA-LOG.md)
 - [Retrospectiva](RETROSPECTIVA.md)
