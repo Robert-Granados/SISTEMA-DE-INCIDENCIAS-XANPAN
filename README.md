@@ -46,7 +46,13 @@ El código de producción está en `src/main/java` y las pruebas en
 
 ## Ejecutar la aplicacion
 
-Construye el JAR y abre la interfaz grafica desde la raiz:
+Primero levanta PostgreSQL y espera a que este disponible:
+
+```bash
+docker compose up -d --wait
+```
+
+Luego construye el JAR y abre la interfaz grafica desde la raiz:
 
 ```bash
 mvn clean package
@@ -54,7 +60,8 @@ java -jar target/sistema-incidencias-1.0.0-SNAPSHOT.jar
 ```
 
 La interfaz permite registrar, buscar y filtrar incidencias; avanzar estados;
-marcar EXPEDITE; finalizar con una solucion y consultar metricas.
+marcar EXPEDITE; finalizar con una solucion y consultar metricas. Las incidencias
+se guardan en PostgreSQL y vuelven a mostrarse al reiniciar la aplicacion.
 
 La demostracion original de consola sigue disponible:
 
@@ -62,8 +69,7 @@ La demostracion original de consola sigue disponible:
 java -jar target/sistema-incidencias-1.0.0-SNAPSHOT.jar --console
 ```
 
-Los datos de la interfaz se guardan en memoria durante la ejecucion. El boton
-`Cargar datos de ejemplo` prepara un escenario rapido para la defensa.
+El boton `Cargar datos de ejemplo` prepara un escenario rapido para la defensa.
 
 ## Base de datos PostgreSQL
 
@@ -77,7 +83,7 @@ docker compose up -d --wait
 La conexión predeterminada para desarrollo es:
 
 - Servidor: `localhost`
-- Puerto: `5432`
+- Puerto: `5433`
 - Base de datos: `xanpan`
 - Usuario: `xanpan`
 - Contraseña: `xanpan_dev`

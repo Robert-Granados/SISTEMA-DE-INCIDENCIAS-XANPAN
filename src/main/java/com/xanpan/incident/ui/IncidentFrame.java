@@ -5,6 +5,8 @@ import com.xanpan.incident.model.Incident;
 import com.xanpan.incident.model.IncidentState;
 import com.xanpan.incident.model.Priority;
 import com.xanpan.incident.model.Urgency;
+import com.xanpan.incident.repository.DatabaseConfig;
+import com.xanpan.incident.repository.PostgresIncidentRepository;
 
 import javax.swing.BorderFactory;
 import javax.swing.Box;
@@ -102,7 +104,9 @@ public final class IncidentFrame extends JFrame {
     public static void launch() {
         configureLookAndFeel();
         SwingUtilities.invokeLater(() ->
-                new IncidentFrame(IncidentController.inMemory()).setVisible(true)
+                new IncidentFrame(new IncidentController(
+                        new PostgresIncidentRepository(DatabaseConfig.fromEnvironment())
+                )).setVisible(true)
         );
     }
 

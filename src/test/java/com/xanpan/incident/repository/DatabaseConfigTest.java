@@ -12,7 +12,7 @@ class DatabaseConfigTest {
     void usesDockerComposeDefaults() {
         DatabaseConfig config = DatabaseConfig.fromEnvironment(Map.of());
 
-        assertEquals("jdbc:postgresql://localhost:5432/xanpan", config.url());
+        assertEquals("jdbc:postgresql://localhost:5433/xanpan", config.url());
         assertEquals("xanpan", config.user());
         assertEquals("xanpan_dev", config.password());
     }

@@ -10,7 +10,7 @@ public record DatabaseConfig(String url, String user, String password) {
 
     static DatabaseConfig fromEnvironment(Map<String, String> environment) {
         String host = environment.getOrDefault("POSTGRES_HOST", "localhost");
-        String port = environment.getOrDefault("POSTGRES_PORT", "5432");
+        String port = environment.getOrDefault("POSTGRES_PORT", "5433");
         String database = environment.getOrDefault("POSTGRES_DB", "xanpan");
         String defaultUrl = "jdbc:postgresql://%s:%s/%s".formatted(host, port, database);
 
