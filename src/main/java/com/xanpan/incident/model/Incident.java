@@ -49,6 +49,58 @@ public class Incident {
         this.updatedAt = now;
     }
 
+    private Incident(
+            String id,
+            String title,
+            String description,
+            Impact impact,
+            Urgency urgency,
+            Priority priority,
+            IncidentState state,
+            String category,
+            String solutionDescription,
+            boolean expedited,
+            LocalDateTime createdAt,
+            LocalDateTime updatedAt,
+            LocalDateTime closedAt
+    ) {
+        this.id = id;
+        this.title = title;
+        this.description = description;
+        this.impact = impact;
+        this.urgency = urgency;
+        this.priority = priority;
+        this.state = state;
+        this.category = category;
+        this.solutionDescription = solutionDescription;
+        this.expedited = expedited;
+        this.createdAt = createdAt;
+        this.updatedAt = updatedAt;
+        this.closedAt = closedAt;
+        this.clock = Clock.systemDefaultZone();
+    }
+
+    public static Incident restore(
+            String id,
+            String title,
+            String description,
+            Impact impact,
+            Urgency urgency,
+            Priority priority,
+            IncidentState state,
+            String category,
+            String solutionDescription,
+            boolean expedited,
+            LocalDateTime createdAt,
+            LocalDateTime updatedAt,
+            LocalDateTime closedAt
+    ) {
+        return new Incident(
+                id, title, description, impact, urgency, priority, state, category,
+                solutionDescription, expedited, createdAt, updatedAt, closedAt
+        );
+    }
+
     public String getId() {
         return id;
     }
