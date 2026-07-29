@@ -23,6 +23,9 @@
 
 ## Refactorizacion demostrable
 
+La explicacion completa del problema, los cambios, las pruebas y los commits
+esta en [REFACTOR.md](REFACTOR.md).
+
 | Elemento | Evidencia |
 | --- | --- |
 | Situacion inicial | La regla EXPEDITE estaba duplicada y los tiempos dependian directamente de `LocalDateTime.now()` |
