@@ -123,6 +123,7 @@ el esquema PostgreSQL en cada `push` y `pull_request`.
 - [Evidencia de TDD y trazabilidad](docs/EVIDENCIAS-TDD.md)
 - [Evidencia dedicada de refactorizacion](docs/REFACTOR.md)
 - [Guia para explicar la interfaz](docs/INTERFAZ.md)
+- [Guion completo para la defensa](docs/DEFENSA.md)
 - [Bitacora de uso de IA](IA-LOG.md)
 - [Retrospectiva](RETROSPECTIVA.md)
 
