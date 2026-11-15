@@ -1,5 +1,11 @@
 # Sistema de Incidencias Xanpan
 
+<!-- local-development:start -->
+## Desarrollo local
+
+Consulta [RUNNING.md](RUNNING.md) para ubicar cada componente, abrirlo en su IDE, compilarlo y conocer las comprobaciones realizadas y los requisitos pendientes.
+<!-- local-development:end -->
+
 [![Integracion continua](https://github.com/Robert-Granados/SISTEMA-DE-INCIDENCIAS-XANPAN/actions/workflows/ci.yml/badge.svg?branch=feature%2FAlejandro)](https://github.com/Robert-Granados/SISTEMA-DE-INCIDENCIAS-XANPAN/actions/workflows/ci.yml)
 
 Aplicacion academica para registrar incidencias de soporte, calcular su prioridad, controlar el flujo Xanpan, aplicar la politica EXPEDITE y consultar metricas operativas.
