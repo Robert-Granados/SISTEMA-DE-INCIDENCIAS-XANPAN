@@ -1,5 +1,11 @@
 # Sistema de Incidencias Xanpan
 
+<!-- local-development:start -->
+## Desarrollo local
+
+Consulta [RUNNING.md](RUNNING.md) para ubicar cada componente, abrirlo en su IDE, compilarlo y conocer las comprobaciones realizadas y los requisitos pendientes.
+<!-- local-development:end -->
+
 [![Integracion continua](https://github.com/Robert-Granados/SISTEMA-DE-INCIDENCIAS-XANPAN/actions/workflows/ci.yml/badge.svg?branch=feature%2FAlejandro)](https://github.com/Robert-Granados/SISTEMA-DE-INCIDENCIAS-XANPAN/actions/workflows/ci.yml)
 
 Aplicacion academica para registrar incidencias de soporte, calcular su prioridad, controlar el flujo Xanpan, aplicar la politica EXPEDITE y consultar metricas operativas.
@@ -148,3 +154,25 @@ Decisiones principales:
 ## Estado de integracion continua
 
 El workflow `ci.yml` se ejecuta en cada `push` y `pull_request`, compila con Java 17, ejecuta las 99 pruebas Java y valida el esquema PostgreSQL. El distintivo superior apunta a la rama `feature/Alejandro`.
+
+<!-- build-repairs-20261115:start -->
+## Reparación y comprobación — 2026-11-15
+
+- Se documentaron los comandos de compilación y comprobación con Maven/JDK 24 y se conservaron los cambios previos de README y exclusiones.
+
+Comprobado:
+
+- Maven package terminó correctamente para `pom.xml`.
+- Maven: [INFO] Tests run: 102, Failures: 0, Errors: 0, Skipped: 0
+
+Comandos:
+
+```powershell
+mvn -f "pom.xml" package
+```
+
+Alcance pendiente:
+
+- Compilar y ejecutar la suite disponible no demuestra todos los flujos gráficos, de datos o de instalación.
+
+<!-- build-repairs-20261115:end -->
